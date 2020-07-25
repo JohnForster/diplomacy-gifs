@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import to from './utils/to';
@@ -29,19 +29,39 @@ const OutputGif = styled.img`
   width: 100%;
 `;
 
+const clamp = (num: number, min: number, max: number): number =>
+  num < min ? min
+  : num > max ? max
+  : num
+
 const App: React.FC = () => {
   const [gameId, setGameId] = useState('176578');
   const [status, setStatus] = useState('');
+  const [delay, setDelay] = useState(90)
+  const [lastFrameRepeat, setLastFrameRepeat] = useState(3)
   const [error, setError] = useState('');
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setGameId(e.target.value.replace(/[^0-9]/g, '').slice(0, 6));
 
+  const handleNumberStateChange = (setStateFn: React.Dispatch<React.SetStateAction<number>>) => 
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setStateFn(parseInt(e.target.value, 10));
+
+  const handleDelayChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
+    setDelay(parseInt(e.target.value, 10));
+
+  const handleLastFrameChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
+    setLastFrameRepeat(parseInt(e.target.value, 10));
+
   const begin = async () => {
+    setDelay(clamp(delay, 10, 300))
+    setLastFrameRepeat(clamp(delay, 1, 10))
     setStatus('Fetching Images...');
-    const [err, gif] = await to(getGif(gameId, setStatus, { delay: 90, lastFrameRepeat: 3 }));
+    const [err, gif] = await to(getGif(gameId, setStatus, { delay, lastFrameRepeat }));
     if (err) console.log('Error:', err);
-    if (err || !gif) return setError(err?.message ?? 'There was an error');
+    if (err || !gif){
+      return setError(err?.message ?? 'There was an error');}
     setGif(gif, document.getElementById('outputGif') as HTMLImageElement);
     setStatus('');
   };
@@ -50,11 +70,19 @@ const App: React.FC = () => {
     <>
       <GlobalStyle />
       <h1>Diplomacy GIF Generator</h1>
-      Game ID: <input type="text" value={gameId} onChange={handleChange} />
+      <p>
+        Game ID: <input type="text" value={gameId} onChange={handleChange} />
+      </p>
+      <p>
+        Delay (ms): <input type="number" value={delay} min="10" max="300" onChange={handleDelayChange} />
+      </p>
+      <p>
+        Repeat last frame <input type="number" value={lastFrameRepeat} min="1" max="10" onChange={handleLastFrameChange} /> times.
+      </p>
       <button disabled={!!status} onClick={begin}>
         Submit
       </button>
-      {error}
+      <p>{error}</p>
       <GifContainer>
         <OutputGif id="outputGif" />
         {status && <> {status} </>}
