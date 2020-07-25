@@ -15,16 +15,14 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const RATIO = 0.856
 const GifContainer = styled.div`
   width: 800px;
-  height: 800px;
+  height: calc(800px * ${RATIO});
   border: 1px solid black;
   margin: auto;
-
-  @media (only screen and (max-width: 767px)) {
-    width: 80vw;
-    height: 80vw;
-  }
+  max-width: 90vw;
+  max-height: calc(90vw * ${RATIO});
 `;
 
 const OutputGif = styled.img`
