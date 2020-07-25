@@ -25,7 +25,7 @@
     "build": "react-app-rewired build && patch-package",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && build",
     "heroku-postbuild": "patch-package"
   },
   "eslintConfig": {
