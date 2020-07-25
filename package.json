@@ -27,8 +27,8 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "postinstall": "yarn patch-package",
-    "heroku-postbuild": "patch-package"
+    "postinstall": "yarn patch-package && yarn build",
+    "heroku-postbuild": "patch-package && yarn build"
   },
   "eslintConfig": {
     "extends": "react-app"

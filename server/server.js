@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const app = express();
 
-const publicPath = path.join(__dirname, '..', 'build');
+const publicPath = path.join(__dirname, 'build');
 
 const port = process.env.PORT || 3000;
 
@@ -13,5 +13,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log('Server is up!');
+    console.log(`Server is up at port ${port}!`);
 });
