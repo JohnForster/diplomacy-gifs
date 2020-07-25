@@ -1,0 +1,13 @@
+diff --git a/node_modules/wasm-imagemagick/dist/src/magickApi.js b/node_modules/wasm-imagemagick/dist/src/magickApi.js
+index faa3308..80a8aa7 100644
+--- a/node_modules/wasm-imagemagick/dist/src/magickApi.js
++++ b/node_modules/wasm-imagemagick/dist/src/magickApi.js
+@@ -75,7 +75,7 @@ let currentJavascriptURL = './magickApi.js';
+ //
+ //
+ {
+-    let stacktrace = stacktrace_js_1.default.getSync();
++    let stacktrace = stacktrace_js_1.getSync();
+     currentJavascriptURL = stacktrace[0].fileName;
+ }
+ const magickWorkerUrl = GetCurrentUrlDifferentFilename('magick.js');

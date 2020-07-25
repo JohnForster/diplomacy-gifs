@@ -22,9 +22,11 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build": "react-app-rewired build && patch-package",
     "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "postinstall": "patch-package",
+    "heroku-postbuild": "patch-package"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -48,6 +50,8 @@
     "eslint-plugin-jsx-control-statements": "^2.2.1",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.0",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.0.5",
     "react-app-rewired": "^2.1.6",
     "wasm-loader": "^1.3.0"
