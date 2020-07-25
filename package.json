@@ -14,6 +14,7 @@
     "axios": "^0.19.2",
     "is-gif": "^3.0.0",
     "react": "^16.13.1",
+    "react-app-rewired": "^2.1.6",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "styled-components": "^5.1.1",
@@ -21,11 +22,12 @@
     "wasm-imagemagick": "^1.2.7"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build && patch-package",
+    "start:dev": "react-app-rewired start",
+    "start": "npx serve",
+    "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "postinstall": "patch-package && yarn build",
+    "postinstall": "yarn patch-package",
     "heroku-postbuild": "patch-package"
   },
   "eslintConfig": {
@@ -53,7 +55,6 @@
     "patch-package": "^6.2.2",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.0.5",
-    "react-app-rewired": "^2.1.6",
     "wasm-loader": "^1.3.0"
   }
 }
