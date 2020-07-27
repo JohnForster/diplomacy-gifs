@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import to from './utils/to';
@@ -44,10 +44,6 @@ const App: React.FC = () => {
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setGameId(e.target.value.replace(/[^0-9]/g, '').slice(0, 6));
 
-  const handleNumberStateChange = (setStateFn: React.Dispatch<React.SetStateAction<number>>) => 
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      setStateFn(parseInt(e.target.value, 10));
-
   const handleDelayChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setDelay(parseInt(e.target.value, 10));
 
@@ -55,10 +51,12 @@ const App: React.FC = () => {
     setLastFrameRepeat(parseInt(e.target.value, 10));
 
   const begin = async () => {
-    setDelay(clamp(delay, 10, 300))
-    setLastFrameRepeat(clamp(delay, 1, 10))
+    const clampedDelay = clamp(delay, 10, 300)
+    const clampedLastFrameRepeat = clamp(lastFrameRepeat, 1, 10)
+    setDelay(clampedDelay)
+    setLastFrameRepeat(clampedLastFrameRepeat)
     setStatus('Fetching Images...');
-    const [err, gif] = await to(getGif(gameId, setStatus, { delay, lastFrameRepeat }));
+    const [err, gif] = await to(getGif(gameId, setStatus, { delay: clampedDelay, lastFrameRepeat: clampedLastFrameRepeat }));
     if (err) console.log('Error:', err);
     if (err || !gif){
       return setError(err?.message ?? 'There was an error');}
