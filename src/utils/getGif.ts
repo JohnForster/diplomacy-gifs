@@ -90,9 +90,14 @@ const getGif = async (
   { delay, lastFrameRepeat }: Options,
 ): Promise<MagickFile> => {
   const inputFiles = await getImages(id);
+  if (!inputFiles.length) {
+    throw new Error (`No images found for game ${id}`)
+  }
   setStatus(`${inputFiles.length} images found. Combining images... \n (This may take a minute...)`);
   const [err, gif] = await to(combine(inputFiles, { delay, lastFrameRepeat }));
-  if (err || !gif) return Promise.reject(err ?? 'No gif for some reason');
+  if (err || !gif) {
+    throw err || new Error('No gif for some reason')
+  }
   return gif;
 };
 

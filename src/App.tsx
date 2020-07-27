@@ -53,13 +53,16 @@ const App: React.FC = () => {
   const begin = async () => {
     const clampedDelay = clamp(delay, 10, 300)
     const clampedLastFrameRepeat = clamp(lastFrameRepeat, 1, 10)
+    setError('')
     setDelay(clampedDelay)
     setLastFrameRepeat(clampedLastFrameRepeat)
     setStatus('Fetching Images...');
     const [err, gif] = await to(getGif(gameId, setStatus, { delay: clampedDelay, lastFrameRepeat: clampedLastFrameRepeat }));
     if (err) console.log('Error:', err);
     if (err || !gif){
-      return setError(err?.message ?? 'There was an error');}
+      (document.getElementById('outputGif') as HTMLImageElement).setAttribute('src' , '')
+      setStatus('')
+      return setError(err?.message || 'There was an error');}
     setGif(gif, document.getElementById('outputGif') as HTMLImageElement);
     setStatus('');
   };
