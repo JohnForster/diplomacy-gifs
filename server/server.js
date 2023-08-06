@@ -16,14 +16,19 @@ app.use('/proxy/:id/:season/:phase', (req, res) => {
   const url = `${BASE_URL}?game_id=${id}&gdate=${season}&current_phase=${phase}`;
   const slug = `${id}-${season}-${phase}`;
 
-  fetch(url).then((response) => {
-    res.set({
-      'content-length': response.headers.get('content-length'),
-      'content-disposition': `inline;filename="${slug}"`,
-      'content-type': response.headers.get('content-type'),
+  fetch(url)
+    .then((response) => {
+      res.set({
+        'content-length': response.headers.get('content-length'),
+        'content-disposition': `inline;filename="${slug}"`,
+        'content-type': response.headers.get('content-type'),
+      });
+      stream.Readable.fromWeb(response.body).pipe(res);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(404).send({ message: 'No image found' });
     });
-    stream.Readable.fromWeb(response.body).pipe(res);
-  });
 });
 
 app.get('*', (req, res) => {
