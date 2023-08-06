@@ -49,18 +49,14 @@ const combine = async (
   const lastFrameDelay = delay * lastFrameRepeat;
   const outputName = 'output';
 
-  // TODO Convert from array to template string
-  const lastArgs = ['-delay', lastFrameDelay, lastImageName];
   const args = [
     'convert',
-    '-delay',
-    delay,
-    '-loop',
-    '0',
-    '-layers',
-    'Optimize',
+    `-delay ${delay}`,
+    '-loop 0',
+    '-layers Optimize',
+    '-fuzz 5%',
     ...inputFiles.map((f) => f.name),
-    ...lastArgs,
+    `-delay ${lastFrameDelay} ${lastImageName}`,
     `${outputName}.gif`,
   ];
   const command = args.join(' ');

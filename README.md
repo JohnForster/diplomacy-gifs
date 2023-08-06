@@ -1,4 +1,4 @@
-# Diplomacy GIF Generator
+# 🔪 Diplomacy GIF Generator 🔪
 
 This is a simple app to generate gifs from games of Diplomacy played on [playdiplomacy.com](https://playdiplomacy.com).
 
