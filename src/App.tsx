@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import to from './utils/to';
@@ -28,11 +28,13 @@ const OutputGif = styled.img`
   width: 100%;
 `;
 
-const SubmitButton = styled.button`
+const Button = styled.button`
   margin-right: 10px;
 `;
 
 const clamp = (num: number, min: number, max: number): number => (num < min ? min : num > max ? max : num);
+
+type InputHandler = React.ChangeEventHandler<HTMLInputElement>;
 
 const App: React.FC = () => {
   const [gameId, setGameId] = useState('212727');
@@ -41,14 +43,19 @@ const App: React.FC = () => {
   const [lastFrameRepeat, setLastFrameRepeat] = useState(3);
   const [error, setError] = useState('');
   const [gifData, setGifData] = useState({ gameId: '', objectUrl: '' });
+  const downloadRef = useRef<HTMLAnchorElement>(null);
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
-    setGameId(e.target.value.replace(/[^0-9]/g, '').slice(0, 6));
+  const handleIdChange: InputHandler = (e) => setGameId(e.target.value.replace(/[^0-9]/g, ''));
 
-  const handleDelayChange: React.ChangeEventHandler<HTMLInputElement> = (e) => setDelay(parseInt(e.target.value, 10));
+  const handleDelayChange: InputHandler = (e) => setDelay(parseInt(e.target.value, 10));
 
-  const handleLastFrameChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
-    setLastFrameRepeat(parseInt(e.target.value, 10));
+  const handleLastFrameChange: InputHandler = (e) => setLastFrameRepeat(parseInt(e.target.value, 10));
+
+  const reset = () => {
+    setStatus('');
+    setError('');
+    setGifData({ gameId: '', objectUrl: '' });
+  };
 
   const begin = async () => {
     const clampedDelay = clamp(delay, 10, 300);
@@ -75,12 +82,16 @@ const App: React.FC = () => {
     setStatus('');
   };
 
+  const download = () => {
+    downloadRef.current?.click();
+  };
+
   return (
     <>
       <GlobalStyle />
       <h1>Diplomacy GIF Generator</h1>
       <p>
-        Game ID: <input type="text" value={gameId} onChange={handleChange} />
+        Game ID: <input type="text" value={gameId} onChange={handleIdChange} />
       </p>
       <p>
         Delay (ms): <input type="number" value={delay} min="10" max="300" onChange={handleDelayChange} />
@@ -89,11 +100,17 @@ const App: React.FC = () => {
         Repeat last frame{' '}
         <input type="number" value={lastFrameRepeat} min="1" max="10" onChange={handleLastFrameChange} /> times.
       </p>
-      <SubmitButton disabled={!!status} onClick={begin}>
+      <Button disabled={!!status || !!gifData.objectUrl} onClick={begin}>
         Submit
-      </SubmitButton>
+      </Button>
+      <Button disabled={!gifData.objectUrl} onClick={download}>
+        Download
+      </Button>
+      <Button disabled={!gifData.objectUrl} onClick={reset}>
+        Reset
+      </Button>
       {gifData.objectUrl && (
-        <a href={gifData.objectUrl} download={`diplo_animated_${gifData.gameId}.gif`}>
+        <a hidden ref={downloadRef} href={gifData.objectUrl} download={`diplo_animated_${gifData.gameId}.gif`}>
           Download
         </a>
       )}
