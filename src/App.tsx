@@ -35,7 +35,7 @@ const clamp = (num: number, min: number, max: number): number =>
   : num
 
 const App: React.FC = () => {
-  const [gameId, setGameId] = useState('176578');
+  const [gameId, setGameId] = useState('212727');
   const [status, setStatus] = useState('');
   const [delay, setDelay] = useState(90)
   const [lastFrameRepeat, setLastFrameRepeat] = useState(3)
