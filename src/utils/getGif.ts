@@ -28,7 +28,6 @@ const getImage = async (
 };
 
 const getImages = async (id: string) => {
-  console.log('seasonsArray:', seasonsArray);
   const promises = seasonsArray
     .map((seasonNumber) => {
       return PHASES.map((phase, i) => {
