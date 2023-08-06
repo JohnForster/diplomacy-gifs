@@ -2,7 +2,7 @@ import { execute, buildInputFile, MagickFile, MagickInputFile, MagickOutputFile 
 
 import to from './to';
 
-import { BASE_URL, NUMBER_OF_SEASONS, PHASES } from '../constants';
+import { NUMBER_OF_SEASONS, PHASES } from '../constants';
 
 const seasonsArray = new Array(NUMBER_OF_SEASONS).fill(1).map((x, i) => i);
 
@@ -12,11 +12,9 @@ const getImage = async (
   phase: 'O' | 'R' | 'B',
   i: number,
 ): Promise<MagickInputFile | null> => {
-  const url = `${BASE_URL}?game_id=${id}&gdate=${seasonNumber}&current_phase=${phase}`;
-
+  const url = `/proxy/${id}/${seasonNumber}/${phase}`;
   const seasonString = seasonNumber.toString().padStart(3, '0');
-  const allOriginUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-  const [err, image] = await to(buildInputFile(allOriginUrl, `${seasonString}-${i}.png`));
+  const [err, image] = await to(buildInputFile(url, `${seasonString}-${i}.png`));
 
   if (err || image?.content.byteLength === 0 || image?.content.byteLength === 18600) {
     return null;
