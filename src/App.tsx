@@ -22,6 +22,9 @@ const GifContainer = styled.div`
   margin: auto;
   max-width: 90vw;
   max-height: calc(90vw * ${RATIO});
+  margin-bottom: 100px;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 
 const OutputGif = styled.img`
