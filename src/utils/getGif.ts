@@ -2,23 +2,23 @@ import { execute, buildInputFile, MagickFile, MagickInputFile, MagickOutputFile 
 
 import to from './to';
 
-import { getBaseUrl, NUMBER_OF_SEASONS, PHASES } from '../constants';
+import { BASE_URL, NUMBER_OF_SEASONS, PHASES } from '../constants';
 
 const seasonsArray = new Array(NUMBER_OF_SEASONS).fill(1).map((x, i) => i);
 
 const getImage = async (
-  baseUrl: string,
+  id: string,
   seasonNumber: number,
   phase: 'O' | 'R' | 'B',
   i: number,
 ): Promise<MagickInputFile | null> => {
-  const url = `${baseUrl}-${seasonNumber}-${phase}.png`;
+  const url = `${BASE_URL}?game_id=${id}&gdate=${seasonNumber}&current_phase=${phase}`;
 
   const seasonString = seasonNumber.toString().padStart(3, '0');
   const allOriginUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
   const [err, image] = await to(buildInputFile(allOriginUrl, `${seasonString}-${i}.png`));
 
-  if (err || image?.content.byteLength === 0) {
+  if (err || image?.content.byteLength === 0 || image?.content.byteLength === 18600) {
     return null;
   }
   if (image) {
@@ -28,12 +28,11 @@ const getImage = async (
 };
 
 const getImages = async (id: string) => {
-  const BASE_URL = getBaseUrl(id);
-
+  console.log('seasonsArray:', seasonsArray);
   const promises = seasonsArray
     .map((seasonNumber) => {
       return PHASES.map((phase, i) => {
-        const image = getImage(BASE_URL, seasonNumber, phase, i);
+        const image = getImage(id, seasonNumber, phase, i);
         return image;
       });
     })
@@ -91,12 +90,12 @@ const getGif = async (
 ): Promise<MagickFile> => {
   const inputFiles = await getImages(id);
   if (!inputFiles.length) {
-    throw new Error (`No images found for game ${id}`)
+    throw new Error(`No images found for game ${id}`);
   }
   setStatus(`${inputFiles.length} images found. Combining images... \n (This may take a minute...)`);
   const [err, gif] = await to(combine(inputFiles, { delay, lastFrameRepeat }));
   if (err || !gif) {
-    throw err || new Error('No gif for some reason')
+    throw err || new Error('No gif for some reason');
   }
   return gif;
 };
