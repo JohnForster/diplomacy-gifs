@@ -46,6 +46,17 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
+const run = async () => {
+  const response = await fetch('https://api.deezer.com/genre');
+
+  const str = await response.text();
+
+  console.log('response.headers:', JSON.stringify(response.headers, null, 2));
+  console.log('response.status:', response.status);
+  console.log(str);
+};
+
 app.listen(port, () => {
   console.log(`Server is up at port ${port}!`);
+  run();
 });
