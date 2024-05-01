@@ -11,12 +11,15 @@ const getImage = async (
   seasonNumber: number,
   phase: 'O' | 'R' | 'B',
   i: number,
+  fog: boolean,
 ): Promise<MagickInputFile | null> => {
-  const url = `/proxy/${id}/${seasonNumber}/${phase}`;
+  const url = `/proxy/${id}/${seasonNumber}/${phase}?fog=${fog}`;
   const seasonString = seasonNumber.toString().padStart(3, '0');
+
   const [err, image] = await to(buildInputFile(url, `${seasonString}-${i}.png`));
 
-  if (err || image?.content.byteLength === 0 || image?.content.byteLength === 18600) {
+  const FALLBACK_IMAGE_BYTE_LENGTH = 18600;
+  if (err || image?.content.byteLength === 0 || image?.content.byteLength === FALLBACK_IMAGE_BYTE_LENGTH) {
     return null;
   }
   if (image) {
@@ -25,11 +28,11 @@ const getImage = async (
   return null;
 };
 
-const getImages = async (id: string) => {
+const getImages = async (id: string, fog: boolean) => {
   const promises = seasonsArray
     .map((seasonNumber) => {
       return PHASES.map((phase, i) => {
-        const image = getImage(id, seasonNumber, phase, i);
+        const image = getImage(id, seasonNumber, phase, i, fog);
         return image;
       });
     })
@@ -75,13 +78,14 @@ const combine = async (
 interface Options {
   delay: number;
   lastFrameRepeat: number;
+  fog: boolean;
 }
 const getGif = async (
   id: string,
   setStatus: (s: string) => void,
-  { delay, lastFrameRepeat }: Options,
+  { delay, lastFrameRepeat, fog }: Options,
 ): Promise<MagickFile> => {
-  const inputFiles = await getImages(id);
+  const inputFiles = await getImages(id, fog);
   if (!inputFiles.length) {
     throw new Error(`No images found for game ${id}`);
   }

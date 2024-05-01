@@ -40,7 +40,8 @@ const clamp = (num: number, min: number, max: number): number => (num < min ? mi
 type InputHandler = React.ChangeEventHandler<HTMLInputElement>;
 
 const App: React.FC = () => {
-  const [gameId, setGameId] = useState('212727');
+  const [gameId, setGameId] = useState('218759');
+  const [fog, setFog] = useState(false);
   const [status, setStatus] = useState('');
   const [delay, setDelay] = useState(90);
   const [lastFrameRepeat, setLastFrameRepeat] = useState(3);
@@ -53,6 +54,8 @@ const App: React.FC = () => {
   const handleDelayChange: InputHandler = (e) => setDelay(parseInt(e.target.value, 10));
 
   const handleLastFrameChange: InputHandler = (e) => setLastFrameRepeat(parseInt(e.target.value, 10));
+
+  const handleFogChange: InputHandler = (e) => setFog(e.target.checked);
 
   const reset = () => {
     setStatus('');
@@ -72,9 +75,9 @@ const App: React.FC = () => {
       objectUrl: '',
     };
     const [err, gif] = await to(
-      getGif(gameId, setStatus, { delay: clampedDelay, lastFrameRepeat: clampedLastFrameRepeat }),
+      getGif(gameId, setStatus, { delay: clampedDelay, lastFrameRepeat: clampedLastFrameRepeat, fog }),
     );
-    if (err) console.log('Error:', err);
+    if (err) console.error(err);
     if (err || !gif) {
       (document.getElementById('outputGif') as HTMLImageElement).setAttribute('src', '');
       setStatus('');
@@ -102,6 +105,9 @@ const App: React.FC = () => {
       <p>
         Repeat last frame{' '}
         <input type="number" value={lastFrameRepeat} min="1" max="10" onChange={handleLastFrameChange} /> times.
+      </p>
+      <p>
+        Is fog of war game? <input type="checkbox" checked={fog} onChange={handleFogChange} />
       </p>
       <Button disabled={!!status || !!gifData.objectUrl} onClick={begin}>
         Submit
